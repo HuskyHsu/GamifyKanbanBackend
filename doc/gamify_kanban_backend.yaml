@@ -1,0 +1,393 @@
+openapi: '3.0.2'
+info:
+  title: 'Gamify Kanban Backend' 
+  version: '1.0'
+  description:  'Restful API Doc for the backend service, contain **player**, **admin**, **skill**, **level**, **profession**... Our database is **mongoDB**'
+servers:
+  - url: https://localhost:3000/api
+
+
+components:
+  schemas:
+    Player:
+      description: A player is an employee
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - password
+        - level
+        - experience
+        - createDate
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: 林老師
+        email:
+          type: string
+          example: mail@mail.com
+        phone:
+          type: string
+          example: 0988213456
+        password:
+          type: string
+          format: sha-256
+        profession:
+           $ref: '#/components/schemas/Profession'
+        level:
+          type: integer
+          default: 0
+        experience:
+          type: integer
+          default: 0
+        nextLevelExperience:
+          type: integer
+        createDate:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        team:
+          type: object
+        isAdmin:
+          type: boolean
+          default: false
+    Profession:
+      description: different position about jobs
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          default: 新人
+          example: 後端魔法師
+    Kanban:
+      description: task distribution board
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        stages:
+          type: array
+          items:
+            type: string
+          example: ['todo','doing','review','complete']
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+    Task:
+      description: describe task detail and duedate, experience can earn
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        title:
+          type: string
+          example: "考試100分"
+        description:
+          type: string
+          example: "努力唸書" 
+        startDate:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        dueDate:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        bonus:
+          type: integer
+          example: 100
+        experience:
+          type: integer
+          example: 100
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+        comments:
+          type: string
+          example: "做得好！"
+    Team:
+      description: multi players has same goal will be a group
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: "考試100分"
+        description:
+          type: string
+          example: "偉大的gamify團隊，立志完成偉大作品"
+        leader:
+          type: object
+          $ref: '#/components/schemas/Player'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+        monthlyScore:
+          type: integer
+          example: 999
+    Guild:
+      description: As department in company
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: "考試100分"
+        description:
+          type: string
+          example: "偉大的工程師團隊，立志完成偉大作品"
+        leader:
+          type: object
+          $ref: '#/components/schemas/Player'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+        monthlyScore:
+          type: integer
+          example: 999
+    Skill:
+      description: player's skills
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: "React.js"
+        needed:
+          type: string
+          example: "使用readt.js獨立完成一個網頁畫面建置"
+        experienceLearned:
+          type: string
+paths:
+  /players:
+    get:
+      tags:
+        - "Player"
+      summary: "取得所有玩家資料"
+      description: "回傳所有使用者資料"
+      operationId: ""
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+        '404':
+          description: not found
+    post:
+      tags:
+          - "Player"
+      summary: 新增玩家
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+    delete:
+      tags:
+        - "Player"
+      summary: 刪除玩家
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+  /player/:id:
+    get:
+      tags:
+          - "Player"
+      summary: "取得特定玩家資料"
+      description: ""
+      operationId: "" 
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+    patch:
+      tags:
+        - "Player"
+      summary: "取得特定玩家資料"
+      description: ""
+      operationId: "" 
+      requestBody: 
+        description: 帳
+        content: 
+            'application/json':
+              examples:
+                user:
+                  summary: User Example
+                  externalValue: 'http://foo.bar/examples/user-example.json'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+  /player/login:
+    post:
+      tags:
+        - "Player"
+      summary: "登入玩家"
+      description: ""
+      requestBody: 
+        description: 修改資料
+        content: 
+            'application/json':
+              examples:
+                user:
+                  summary: User Example
+                  externalValue: 'http://foo.bar/examples/user-example.json'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+  /admins:
+    get:
+      tags:
+        - "Admin"
+      summary: "取得所有管理員資料"
+      description: "回傳所有使用者資料"
+      operationId: ""
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+        '404':
+          description: not found
+    post:
+      tags:
+          - "Admin"
+      summary: 新增管理員
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+    delete:
+      tags:
+        - "Admin"
+      summary: 刪除管理員
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+  /admin/:id:
+    get:
+      tags:
+          - "Admin"
+      summary: "取得特定管理員資料"
+      description: ""
+      operationId: "" 
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+    patch:
+      tags:
+        - "Admin"
+      summary: "修改特定管理員資料"
+      description: ""
+      operationId: "" 
+      requestBody: 
+        description: 帳
+        content: 
+            'application/json':
+              examples:
+                user:
+                  summary: User Example
+                  externalValue: 'http://foo.bar/examples/user-example.json'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+  /admin/login:
+    post:
+      tags:
+        - "Admin"
+      summary: "登入管理員"
+      description: ""
+      requestBody: 
+        description: 修改資料
+        content: 
+            'application/json':
+              examples:
+                user:
+                  summary: User Example
+                  externalValue: 'http://foo.bar/examples/user-example.json'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+  /admin/logout:
+    post:
+      tags:
+        - "Admin"
+      summary: "登出管理員"
+      description: ""
+      requestBody: 
+        description: 修改資料
+        content: 
+            'application/json':
+              examples:
+                user:
+                  summary: User Example
+                  externalValue: 'http://foo.bar/examples/user-example.json'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: failed
+
+tags:
+  - name: Player
+  - name: Admin
+  - name: Kanban
+  - name: Task
+  - name: Profession
+  - name: Team
+  - name: Guild
+  - name: Skill
