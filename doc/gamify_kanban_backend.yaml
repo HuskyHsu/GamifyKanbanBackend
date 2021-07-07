@@ -12,14 +12,6 @@ components:
     Player:
       description: A player is an employee
       type: object
-      required:
-        - id
-        - name
-        - email
-        - password
-        - level
-        - experience
-        - createDate
       properties:
         id:
           type: string
@@ -35,6 +27,9 @@ components:
           type: string
           example: 0988213456
         password:
+          type: string
+          format: sha-256
+        token:
           type: string
           format: sha-256
         profession:
@@ -202,41 +197,155 @@ paths:
     get:
       tags:
         - "Player"
-      summary: "取得所有玩家資料"
-      description: "回傳所有使用者資料"
-      operationId: ""
+      summary: "Find users data and response with query format"
+      description: "Find all users with query.condition and return data ask with query.content"
+      operationId: "findPetsByStatus"
+      parameters:
+        - in: header
+          name: x-access-token
+          description: The token as key let for access data
+          schema:
+            type: string
+        - in: query
+          name: conditions
+          description: pass an optional search string for looking up inventory
+          schema:
+            $ref: '#/components/schemas/Player'
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+        - in: query
+          name: content
+          description: column need to return
+          schema:
+            $ref: '#/components/schemas/Player' 
       responses:
         '200':
-          description: OK
+          description: results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
         '400':
-          description: failed
+          description: wrong request / invalid input
+        '401':
+          description: Unauthorized
         '404':
           description: not found
+        '500':
+          description: server error
     post:
       tags:
           - "Player"
-      summary: 新增玩家
+      summary: Create new player
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - "email"
+                - "password"
+              properties:
+                email:
+                  type: string
+                  example: "test@mail.com"
+                password:
+                  type: string
+                  example: "qwe123456"
       responses:
         '200':
-          description: OK
+          description: results matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: d290f1ee-6c54-4b01-90e6-d701748f0851
+                  token:
+                    type: string
+                    format: sha-256
+                    description: token need to store for user indentify
         '400':
-          description: failed
+          description: wrong request / invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: not found
+        '500':
+          description: server error
     delete:
       tags:
         - "Player"
-      summary: 刪除玩家
+      summary: Delete players data
+      parameters:
+        - in: header
+          name: x-access-token
+          description: The token as key let for access data
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: arrays of player id
+              items:
+                type: string 
+              example: ["2131230-13123-123132", "123123-123123-123123"]
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: deleted players id
+                items:
+                  type: string
         '400':
-          description: failed
+          description: wrong request / invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: not found
+        '500':
+          description: server error
   /player/:id:
     get:
       tags:
           - "Player"
-      summary: "取得特定玩家資料"
-      description: ""
-      operationId: "" 
+      summary: "Get specific player data"
+      description: "Return player data match query"
+      parameters:
+        - in: header
+          name: x-access-token
+          description: The token as key let for access data
+          schema:
+            type: string
+        - in: query
+          name: conditions
+          description: pass an optional search string for looking up inventory
+          required: false
+          schema:
+            $ref: '#/components/schemas/Player'
       responses:
         '200':
           description: OK
@@ -245,41 +354,63 @@ paths:
     patch:
       tags:
         - "Player"
-      summary: "取得特定玩家資料"
-      description: ""
+      summary: "update player data"
+      description: "updata player data send from request"
       operationId: "" 
+      parameters:
+        - in: header
+          name: x-access-token
+          description: The token as key let for access data
+          schema:
+            type: string
       requestBody: 
-        description: 帳
-        content: 
-            'application/json':
-              examples:
-                user:
-                  summary: User Example
-                  externalValue: 'http://foo.bar/examples/user-example.json'
+        description: data want to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'                
       responses:
         '200':
           description: OK
         '400':
-          description: failed
+          description: wrong request / invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: not found
+        '500':
+          description: server error
   /player/login:
     post:
       tags:
         - "Player"
-      summary: "登入玩家"
-      description: ""
-      requestBody: 
-        description: 修改資料
-        content: 
-            'application/json':
-              examples:
-                user:
-                  summary: User Example
-                  externalValue: 'http://foo.bar/examples/user-example.json'
+      summary: "player login and get token"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - "email"
+                - "password"
+              properties:
+                email:
+                  type: string
+                  example: "test@mail.com"
+                password:
+                  type: string
+                  example: "qwe123456"
       responses:
         '200':
           description: OK
         '400':
-          description: failed
+          description: wrong request / invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: not found
+        '500':
+          description: server error
   /admins:
     get:
       tags:
