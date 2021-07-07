@@ -1,3 +1,8 @@
 build/*
 node_module/*
+doc/*
 **/**test.js
+jest.config.js
+.gitignore
+.eslintignore
+.eslintrc.json
