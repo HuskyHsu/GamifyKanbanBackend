@@ -200,7 +200,7 @@ components:
           example: "React.js"
         needed:
           type: string
-          example: "使用readt.js獨立完成一個網頁畫面建置"
+          example: "使用react.js獨立完成一個網頁畫面建置"
         experienceLearned:
           type: integer
     Label:
@@ -216,7 +216,7 @@ components:
           example: d290f1ee-6c54-4b01-90e6-d701748f0851
         name:
           type: string
-          default: 警急任務
+          default: 緊急任務
           example: 支線任務
 
 paths:
