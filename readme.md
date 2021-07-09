@@ -10,7 +10,7 @@
 - **DataBase**: mySql/MariaDB
 - **Lint**: eslint, AirBnb
 - **Test**: jest
-- **CI/CD**: jenkins
+- **CI/CD**: Drone 
 - 
 ---
 ## Development
@@ -33,4 +33,8 @@ npm run test
 ```
 npm run build
 ```
-
+## How to run
+```
+docker build -t backend:1.0 .
+docker-compose -f backend-dev-dockre-compose.yaml up
+```
