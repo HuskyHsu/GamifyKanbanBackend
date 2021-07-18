@@ -1,8 +1,8 @@
-openapi: '3.0.2'
+openapi: "3.0.2"
 info:
-  title: 'Gamify Kanban Backend'
-  version: '1.0'
-  description:  'Restful API Doc for the backend service, contain **player**, **admin**, **skill**, **level**, **profession**... Our database is **mongoDB**'
+  title: "Gamify Kanban Backend"
+  version: "1.0"
+  description: "Restful API Doc for the backend service, contain **player**, **admin**, **skill**, **level**, **profession**... Our database is **mongoDB**"
 servers:
   - url: https://localhost:3000/api
 
@@ -37,7 +37,7 @@ components:
           type: string
           format: sha-256
         profession:
-           $ref: '#/components/schemas/Profession'
+          $ref: "#/components/schemas/Profession"
         level:
           type: integer
           default: 0
@@ -49,9 +49,9 @@ components:
         createDate:
           type: string
           format: date-time
-          example: '2016-08-29T09:12:33.001Z'
+          example: "2016-08-29T09:12:33.001Z"
         team:
-          $ref: '#/components/schemas/Team'
+          $ref: "#/components/schemas/Team"
         isAdmin:
           type: boolean
           default: false
@@ -87,11 +87,22 @@ components:
           type: array
           items:
             type: string
-          example: ['todo','doing','review','complete']
+          example: ["todo", "doing", "review", "complete"]
         tasks:
           type: array
           items:
-            $ref: '#/components/schemas/Task'
+            $ref: "#/components/schemas/Task"
+        createData:
+          type: string
+        owner:
+          $ref: "#/components/schemas/Player"
+        members:
+          items:
+            $ref: "#/components/schemas/Kanban"
+        isArchvie:
+          type: boolean
+        isDelete:
+          type: boolean
     Task:
       description: describe task detail and duedate, experience can earn
       type: object
@@ -111,11 +122,11 @@ components:
         startDate:
           type: string
           format: date-time
-          example: '2016-08-29T09:12:33.001Z'
+          example: "2016-08-29T09:12:33.001Z"
         dueDate:
           type: string
           format: date-time
-          example: '2016-08-29T09:12:33.001Z'
+          example: "2016-08-29T09:12:33.001Z"
         bonus:
           type: integer
           example: 100
@@ -125,14 +136,21 @@ components:
         labels:
           type: array
           items:
-            $ref: '#/components/schemas/Label'
+            $ref: "#/components/schemas/Label"
         owners:
           type: array
           items:
-            $ref: '#/components/schemas/Player'
+            $ref: "#/components/schemas/Player"
         comments:
           type: string
           example: "做得好！"
+        stage:
+          type: string
+          example: id of stage
+        isArchvie:
+          type: boolean
+        isDelete:
+          type: boolean
     Team:
       description: multi players has same goal will be a group
       type: object
@@ -151,11 +169,11 @@ components:
           example: "偉大的gamify團隊，立志完成偉大作品"
         leader:
           type: object
-          $ref: '#/components/schemas/Player'
+          $ref: "#/components/schemas/Player"
         members:
           type: array
           items:
-            $ref: '#/components/schemas/Player'
+            $ref: "#/components/schemas/Player"
         monthlyScore:
           type: integer
           example: 999
@@ -177,11 +195,11 @@ components:
           example: "偉大的工程師團隊，立志完成偉大作品"
         leader:
           type: object
-          $ref: '#/components/schemas/Player'
+          $ref: "#/components/schemas/Player"
         members:
           type: array
           items:
-            $ref: '#/components/schemas/Player'
+            $ref: "#/components/schemas/Player"
         monthlyScore:
           type: integer
           example: 999
@@ -203,6 +221,12 @@ components:
           example: "使用react.js獨立完成一個網頁畫面建置"
         experienceLearned:
           type: integer
+        parentSkillId:
+          type: string
+        childSkillsId:
+          type: array
+          items:
+            type: string
     Label:
       description: Labels help you organize and follow your tasks
       type: object
@@ -218,6 +242,9 @@ components:
           type: string
           default: 緊急任務
           example: 支線任務
+        color:
+          type: string
+          example: #1F1F1F1F
 
 paths:
   /players:
@@ -256,25 +283,25 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: results matching criteria
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Player'
-        '400':
+                  $ref: "#/components/schemas/Player"
+        "400":
           description: wrong request / invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: not found
-        '500':
+        "500":
           description: server error
     post:
       tags:
-          - "Player"
+        - "Player"
       summary: Create new player
       requestBody:
         content:
@@ -292,7 +319,7 @@ paths:
                   type: string
                   example: "qwe123456"
       responses:
-        '200':
+        "200":
           description: results matching criteria
           content:
             application/json:
@@ -307,19 +334,19 @@ paths:
                     type: string
                     format: sha-256
                     description: token need to store for user indentify
-        '400':
+        "400":
           description: wrong request / invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: not found
-        '500':
+        "500":
           description: server error
 
   /player/{id}:
     get:
       tags:
-          - "Player"
+        - "Player"
       summary: "Get specific player data"
       description: "Return player data match query"
       security:
@@ -339,10 +366,21 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: OK
-        '400':
-          description: failed
+        "200":
+          description: results matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Player"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: user not found
+        "500":
+          description: server error
     patch:
       tags:
         - "Player"
@@ -364,17 +402,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Player'
+              $ref: "#/components/schemas/Player"
       responses:
-        '200':
-          description: OK
-        '400':
+        "200":
+          description: update user:${id} success
+        "400":
           description: wrong request / invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: not found
-        '500':
+        "500":
           description: server error
     delete:
       tags:
@@ -391,7 +429,7 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -400,13 +438,13 @@ paths:
                 description: deleted players id
                 items:
                   type: string
-        '400':
+        "400":
           description: wrong request / invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: not found
-        '500':
+        "500":
           description: server error
 
   /player/bulkDelete:
@@ -414,6 +452,7 @@ paths:
       tags:
         - "Player"
       summary: Delete players data
+      description: this api must be transcition
       security:
         - bearerAuth: []
       requestBody:
@@ -424,10 +463,10 @@ paths:
               description: arrays of player id
               items:
                 type: string
-              example: ["2131230-13123-123132", "123123-123123-123123"]
+                example: ["2131230-13123-123132", "123123-123123-123123"]
       responses:
-        '200':
-          description: OK
+        "200":
+          description: success
           content:
             application/json:
               schema:
@@ -435,13 +474,13 @@ paths:
                 description: deleted players id
                 items:
                   type: string
-        '400':
+        "400":
           description: wrong request / invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: not found
-        '500':
+        "500":
           description: server error
 
   /player/login:
@@ -465,15 +504,29 @@ paths:
                   type: string
                   example: "qwe123456"
       responses:
-        '200':
-          description: OK
-        '400':
+        "200":
+          description: login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: d290f1ee-6c54-4b01-90e6-d701748f0851
+                  token:
+                    type: string
+                    format: sha-256
+                    description: token need to store for user indentify
+
+        "400":
           description: wrong request / invalid input
-        '401':
+        "401":
           description: Unauthorized
-        '404':
+        "404":
           description: not found
-        '500':
+        "500":
           description: server error
 
   /admins:
@@ -484,61 +537,83 @@ paths:
       description: "回傳所有使用者資料"
       operationId: ""
       responses:
-        '200':
+        "200":
           description: OK
-        '400':
-          description: failed
-        '404':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Player"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
           description: not found
+        "500":
+          description: server error
     post:
       tags:
-          - "Admin"
-      summary: 新增管理員
+        - "Admin"
+      summary: 新增管理員，傳入player id陣列
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                description: ids of players
+                type: string
+                example: 123123-123123-1323123
       responses:
-        '200':
+        "200":
           description: OK
-        '400':
-          description: failed
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+  /admin/:id:
+    get:
+      tags:
+        - "Admin"
+      summary: "取得特定管理員資料"
+      description: ""
+      operationId: ""
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Player"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
     delete:
       tags:
         - "Admin"
       summary: 刪除管理員
       responses:
-        '200':
+        "200":
           description: OK
-        '400':
-          description: failed
-  /admin/:id:
-    get:
-      tags:
-          - "Admin"
-      summary: "取得特定管理員資料"
-      description: ""
-      operationId: ""
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: failed
-    patch:
-      tags:
-        - "Admin"
-      summary: "修改特定管理員資料"
-      description: ""
-      operationId: ""
-      requestBody:
-        description: 帳
-        content:
-            'application/json':
-              examples:
-                user:
-                  summary: User Example
-                  externalValue: 'http://foo.bar/examples/user-example.json'
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: failed
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
   /admin/login:
     post:
       tags:
@@ -548,16 +623,41 @@ paths:
       requestBody:
         description: 修改資料
         content:
-            'application/json':
-              examples:
-                user:
-                  summary: User Example
-                  externalValue: 'http://foo.bar/examples/user-example.json'
+          application/json:
+            schema:
+              type: object
+              required:
+                - "email"
+                - "password"
+              properties:
+                email:
+                  type: string
+                  example: "test@mail.com"
+                password:
+                  type: string
+                  example: "qwe123456"
       responses:
-        '200':
+        "200":
           description: OK
-        '400':
-          description: failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+                  token:
+                    type: string
+                    example: "e4jdfj94jf94f-4fj49fj49fj94j"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
   /admin/logout:
     post:
       tags:
@@ -565,18 +665,733 @@ paths:
       summary: "登出管理員"
       description: ""
       requestBody:
-        description: 修改資料
         content:
-            'application/json':
-              examples:
-                user:
-                  summary: User Example
-                  externalValue: 'http://foo.bar/examples/user-example.json'
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: string
       responses:
-        '200':
+        "200":
           description: OK
-        '400':
-          description: failed
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+
+  /kanbans:
+    post:
+      tags:
+        - "Kanban"
+      summary: "新增kanban"
+      requestBody:
+        description: kanban名稱與成員id
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - "name"
+              properties:
+                name:
+                  type: string
+                members:
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Kanban"
+      summary: "取得該使用者所加入的kanban id 與名稱"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+  /kanbans/{id}:
+    patch:
+      tags:
+        - "Kanban"
+      summary: "更新kanban設定"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                stages:
+                  type: array
+                  items:
+                    type: string  
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Kanban'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Kanban"
+      summary: "取得該使用者所加入的特定kanban"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Kanban'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    delete:
+      tags:
+        - "Kanban"
+      summary: "刪除kanban"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+
+  /tasks:
+    post:
+      tags:
+        - "Task"
+      summary: "新增task"
+      requestBody:
+        description: task detail
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Task'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Task"
+      summary: "取得該使用者所加入某kanban所有tasks"
+      parameters:
+        - in: query
+          name: kabanId
+          schema:
+            type: string 
+          description: if no kanbanId, return all tasks
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+  /tasks/{id}:
+    patch:
+      tags:
+        - "Task"
+      summary: "更新task設定"
+      parameters:
+        - in: path 
+          required: true
+          name: taskId
+          schema:
+            type: string 
+          description: if no kanbanId, return all tasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                stages:
+                  type: array
+                  items:
+                    type: string  
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Task'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Task"
+      summary: "取得task"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Task'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+    delete:
+      tags:
+        - "Task"
+      summary: "刪除task"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+
+  /professions:
+    post:
+      tags:
+        - "Profession"
+      summary: "新增profession"
+      requestBody:
+        description: profession data
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Profession'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Profession"
+      summary: "取得所有professio資料"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profession'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+  /professions/{id}:
+    patch:
+      tags:
+        - "Profession"
+      summary: "更新profession設定"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Profession'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Profession"
+      summary: "取得特定profession資料"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Profession'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    delete:
+      tags:
+        - "Profession"
+      summary: "刪除profession"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+
+  /teams:
+    post:
+      tags:
+        - "Team"
+      summary: "新增team"
+      requestBody:
+        description: team data
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - leaderId
+              $ref: '#/components/schemas/Team'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Team"
+      summary: "get data of all teams these player belong or can see"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+  /teams/{id}:
+    patch:
+      tags:
+        - "Team"
+      summary: "update team setting"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Team'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Team"
+      summary: "取得特定team資料"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Team'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    delete:
+      tags:
+        - "Team"
+      summary: "刪除team"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+  /guilds:
+    post:
+      tags:
+        - "Guild"
+      summary: "新增Guild"
+      requestBody:
+        description: Guild data
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - leaderId
+              $ref: '#/components/schemas/Guild'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Guild"
+      summary: "get data of all Guilds these player belong or can see"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Guild'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+  /guilds/{id}:
+    patch:
+      tags:
+        - "Guild"
+      summary: "update Guild setting"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Guild'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Guild"
+      summary: "取得特定Guild資料"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Guild'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    delete:
+      tags:
+        - "Guild"
+      summary: "刪除Guild"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+          
+  /skills:
+    post:
+      tags:
+        - "Skill"
+      summary: "新增Skill"
+      requestBody:
+        description: Skill data
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - leaderId
+              $ref: '#/components/schemas/Skill'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Skill"
+      summary: "get data of all Skills these player belong or can see"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+  /Skills/{id}:
+    patch:
+      tags:
+        - "Skill"
+      summary: "update Skill setting"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Skill'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    get:
+      tags:
+        - "Skill"
+      summary: "取得特定Skill資料"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Skill'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+    delete:
+      tags:
+        - "Skill"
+      summary: "刪除Skill"
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
 
 tags:
   - name: Player
