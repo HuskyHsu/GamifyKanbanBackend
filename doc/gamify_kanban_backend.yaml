@@ -529,12 +529,174 @@ paths:
         "500":
           description: server error
 
+  /player/logout:
+    get:
+      tags:
+        - "Player"
+      summary: "登出"
+      description: ""
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+
+  /player/kanbans:
+    get:
+      tags:
+        - "Kanban"
+        - "Player"
+      summary: "取得該使用者所加入的kanban id 與名稱"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+
+  /player/tasks:
+    get:
+      tags:
+        - "Task"
+        - "Player"
+      summary: "取得該使用者所加入某kanban所有tasks"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: kabanId
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123123-123123-13123"
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+
+  /player/teams:
+    get:
+      tags:
+        - "Team"
+        - "Player"
+      summary: "get data of all teams these player belong or can see"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server error
+
+  /player/guilds:
+    get:
+      tags:
+        - "Guild"
+        - "Player"
+      summary: "get data of all Guilds these player belong or can see"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Guild'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+
+  /player/skills:
+    get:
+      tags:
+        - "Skill"
+        - "Player"
+      summary: "get data of all Skills these player belong or can see"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skill'
+        "400":
+          description: wrong request / invalid input
+        "401":
+          description: Unauthorized
+        "404":
+          description: not found
+        "500":
+          description: server erro
+
   /admins:
     get:
       tags:
         - "Admin"
       summary: "取得所有管理員資料"
       description: "回傳所有使用者資料"
+      security:
+        - bearerAuth: []
       operationId: ""
       responses:
         "200":
@@ -557,6 +719,8 @@ paths:
       tags:
         - "Admin"
       summary: 新增管理員，傳入player id陣列
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -576,13 +740,24 @@ paths:
           description: not found
         "500":
           description: server error
-  /admin/:id:
+
+  /admin/{id}:
     get:
       tags:
         - "Admin"
       summary: "取得特定管理員資料"
       description: ""
       operationId: ""
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: players id
+          schema:
+            type: string
+            format: uuid
       responses:
         "200":
           description: OK
@@ -603,74 +778,16 @@ paths:
       tags:
         - "Admin"
       summary: 刪除管理員
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: wrong request / invalid input
-        "401":
-          description: Unauthorized
-        "404":
-          description: not found
-        "500":
-          description: server error
-  /admin/login:
-    post:
-      tags:
-        - "Admin"
-      summary: "登入管理員"
-      description: ""
-      requestBody:
-        description: 修改資料
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - "email"
-                - "password"
-              properties:
-                email:
-                  type: string
-                  example: "test@mail.com"
-                password:
-                  type: string
-                  example: "qwe123456"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "123123-123123-13123"
-                  token:
-                    type: string
-                    example: "e4jdfj94jf94f-4fj49fj49fj94j"
-        "400":
-          description: wrong request / invalid input
-        "401":
-          description: Unauthorized
-        "404":
-          description: not found
-        "500":
-          description: server error
-  /admin/logout:
-    post:
-      tags:
-        - "Admin"
-      summary: "登出管理員"
-      description: ""
-      requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                id:
-                  type: string
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: players id
+          schema:
+            type: string
+            format: uuid
       responses:
         "200":
           description: OK
@@ -688,6 +805,8 @@ paths:
       tags:
         - "Kanban"
       summary: "新增kanban"
+      security:
+        - bearerAuth: []
       requestBody:
         description: kanban名稱與成員id
         content:
@@ -721,34 +840,14 @@ paths:
           description: not found
         "500":
           description: server error
-    get:
-      tags:
-        - "Kanban"
-      summary: "取得該使用者所加入的kanban id 與名稱"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "123123-123123-13123"
-        "400":
-          description: wrong request / invalid input
-        "401":
-          description: Unauthorized
-        "404":
-          description: not found
-        "500":
-          description: server error
+
   /kanbans/{id}:
     patch:
       tags:
         - "Kanban"
       summary: "更新kanban設定"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -789,6 +888,8 @@ paths:
       tags:
         - "Kanban"
       summary: "取得該使用者所加入的特定kanban"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -817,6 +918,8 @@ paths:
       tags:
         - "Kanban"
       summary: "刪除kanban"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: id
@@ -842,6 +945,8 @@ paths:
       tags:
         - "Task"
       summary: "新增task"
+      security:
+        - bearerAuth: []
       requestBody:
         description: task detail
         content:
@@ -868,44 +973,18 @@ paths:
           description: not found
         "500":
           description: server error
-    get:
-      tags:
-        - "Task"
-      summary: "取得該使用者所加入某kanban所有tasks"
-      parameters:
-        - in: query
-          name: kabanId
-          schema:
-            type: string
-          description: if no kanbanId, return all tasks
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "123123-123123-13123"
-        "400":
-          description: wrong request / invalid input
-        "401":
-          description: Unauthorized
-        "404":
-          description: not found
-        "500":
-          description: server erro
-  /tasks/{taskId}:
+
+  /tasks/{id}:
     patch:
       tags:
         - "Task"
       summary: "更新task設定"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
-          name: taskId
+          name: id
           schema:
             type: string
           description: if no kanbanId, return all tasks
@@ -941,10 +1020,12 @@ paths:
       tags:
         - "Task"
       summary: "取得task"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
-          name: taskId
+          name: id
           schema:
             type: string
           description: if no kanbanId, return all tasks
@@ -968,10 +1049,12 @@ paths:
       tags:
         - "Task"
       summary: "刪除task"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
-          name: taskId
+          name: id
           schema:
             type: string
           description: if no kanbanId, return all tasks
@@ -992,6 +1075,8 @@ paths:
       tags:
         - "Profession"
       summary: "新增profession"
+      security:
+        - bearerAuth: []
       requestBody:
         description: profession data
         content:
@@ -1021,7 +1106,9 @@ paths:
     get:
       tags:
         - "Profession"
-      summary: "取得所有professio資料"
+      summary: "取得所有profession資料"
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: OK
@@ -1039,11 +1126,14 @@ paths:
           description: not found
         "500":
           description: server erro
+
   /professions/{id}:
     patch:
       tags:
         - "Profession"
       summary: "更新profession設定"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1071,6 +1161,8 @@ paths:
       tags:
         - "Profession"
       summary: "取得特定profession資料"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1098,6 +1190,8 @@ paths:
       tags:
         - "Profession"
       summary: "刪除profession"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1122,6 +1216,8 @@ paths:
       tags:
         - "Team"
       summary: "新增team"
+      security:
+        - bearerAuth: []
       requestBody:
         description: team data
         content:
@@ -1155,6 +1251,8 @@ paths:
       tags:
         - "Team"
       summary: "get data of all teams these player belong or can see"
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: OK
@@ -1171,12 +1269,15 @@ paths:
         "404":
           description: not found
         "500":
-          description: server erro
+          description: server error
+
   /teams/{id}:
     patch:
       tags:
         - "Team"
       summary: "update team setting"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1204,6 +1305,8 @@ paths:
       tags:
         - "Team"
       summary: "取得特定team資料"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1231,6 +1334,8 @@ paths:
       tags:
         - "Team"
       summary: "刪除team"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1255,6 +1360,8 @@ paths:
       tags:
         - "Guild"
       summary: "新增Guild"
+      security:
+        - bearerAuth: []
       requestBody:
         description: Guild data
         content:
@@ -1288,6 +1395,8 @@ paths:
       tags:
         - "Guild"
       summary: "get data of all Guilds these player belong or can see"
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: OK
@@ -1305,11 +1414,14 @@ paths:
           description: not found
         "500":
           description: server erro
+
   /guilds/{id}:
     patch:
       tags:
         - "Guild"
       summary: "update Guild setting"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1337,6 +1449,8 @@ paths:
       tags:
         - "Guild"
       summary: "取得特定Guild資料"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1364,6 +1478,8 @@ paths:
       tags:
         - "Guild"
       summary: "刪除Guild"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1388,6 +1504,8 @@ paths:
       tags:
         - "Skill"
       summary: "新增Skill"
+      security:
+        - bearerAuth: []
       requestBody:
         description: Skill data
         content:
@@ -1421,6 +1539,8 @@ paths:
       tags:
         - "Skill"
       summary: "get data of all Skills these player belong or can see"
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: OK
@@ -1438,11 +1558,14 @@ paths:
           description: not found
         "500":
           description: server erro
+
   /Skills/{id}:
     patch:
       tags:
         - "Skill"
       summary: "update Skill setting"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1470,6 +1593,8 @@ paths:
       tags:
         - "Skill"
       summary: "取得特定Skill資料"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
@@ -1497,6 +1622,8 @@ paths:
       tags:
         - "Skill"
       summary: "刪除Skill"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           required: true
