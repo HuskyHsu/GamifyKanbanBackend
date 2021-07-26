@@ -749,6 +749,14 @@ paths:
       tags:
         - "Kanban"
       summary: "更新kanban設定"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: players id
+          schema:
+            type: string
+            format: uuid
       requestBody:
         content:
           application/json:
@@ -760,7 +768,7 @@ paths:
                 stages:
                   type: array
                   items:
-                    type: string  
+                    type: string
       responses:
         "200":
           description: OK
@@ -781,6 +789,14 @@ paths:
       tags:
         - "Kanban"
       summary: "取得該使用者所加入的特定kanban"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: players id
+          schema:
+            type: string
+            format: uuid
       responses:
         "200":
           description: OK
@@ -801,6 +817,14 @@ paths:
       tags:
         - "Kanban"
       summary: "刪除kanban"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: players id
+          schema:
+            type: string
+            format: uuid
       responses:
         "200":
           description: OK
@@ -852,7 +876,7 @@ paths:
         - in: query
           name: kabanId
           schema:
-            type: string 
+            type: string
           description: if no kanbanId, return all tasks
       responses:
         "200":
@@ -873,17 +897,17 @@ paths:
           description: not found
         "500":
           description: server erro
-  /tasks/{id}:
+  /tasks/{taskId}:
     patch:
       tags:
         - "Task"
       summary: "更新task設定"
       parameters:
-        - in: path 
+        - in: path
           required: true
           name: taskId
           schema:
-            type: string 
+            type: string
           description: if no kanbanId, return all tasks
       requestBody:
         content:
@@ -896,7 +920,7 @@ paths:
                 stages:
                   type: array
                   items:
-                    type: string  
+                    type: string
       responses:
         "200":
           description: OK
@@ -917,6 +941,13 @@ paths:
       tags:
         - "Task"
       summary: "取得task"
+      parameters:
+        - in: path
+          required: true
+          name: taskId
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -937,6 +968,13 @@ paths:
       tags:
         - "Task"
       summary: "刪除task"
+      parameters:
+        - in: path
+          required: true
+          name: taskId
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1006,6 +1044,13 @@ paths:
       tags:
         - "Profession"
       summary: "更新profession設定"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1026,6 +1071,13 @@ paths:
       tags:
         - "Profession"
       summary: "取得特定profession資料"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1046,6 +1098,13 @@ paths:
       tags:
         - "Profession"
       summary: "刪除profession"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1118,6 +1177,13 @@ paths:
       tags:
         - "Team"
       summary: "update team setting"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1138,6 +1204,13 @@ paths:
       tags:
         - "Team"
       summary: "取得特定team資料"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1158,6 +1231,13 @@ paths:
       tags:
         - "Team"
       summary: "刪除team"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1169,6 +1249,7 @@ paths:
           description: not found
         "500":
           description: server error
+
   /guilds:
     post:
       tags:
@@ -1229,6 +1310,13 @@ paths:
       tags:
         - "Guild"
       summary: "update Guild setting"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1249,6 +1337,13 @@ paths:
       tags:
         - "Guild"
       summary: "取得特定Guild資料"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1269,6 +1364,13 @@ paths:
       tags:
         - "Guild"
       summary: "刪除Guild"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1280,7 +1382,7 @@ paths:
           description: not found
         "500":
           description: server error
-          
+
   /skills:
     post:
       tags:
@@ -1341,6 +1443,13 @@ paths:
       tags:
         - "Skill"
       summary: "update Skill setting"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1361,6 +1470,13 @@ paths:
       tags:
         - "Skill"
       summary: "取得特定Skill資料"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
@@ -1381,6 +1497,13 @@ paths:
       tags:
         - "Skill"
       summary: "刪除Skill"
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+          description: if no kanbanId, return all tasks
       responses:
         "200":
           description: OK
